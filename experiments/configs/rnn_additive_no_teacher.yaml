@@ -1,0 +1,35 @@
+seed: 42
+
+model:
+  type: rnn
+  architecture: gru
+  embedding_dim: 256
+  hidden_dim: 512
+  num_layers: 2
+  dropout: 0.3
+  attention: additive
+  max_decode_len: 120
+
+training:
+  batch_size: 128
+  eval_batch_size: 64
+  learning_rate: 0.001
+  num_epochs: 500
+  max_grad_norm: 5.0
+  teacher_forcing_ratio: 0.0
+  teacher_forcing_decay: 0.0
+  num_workers: 4
+
+data:
+  train_file: data/processed/train.jsonl
+  valid_file: data/processed/valid.jsonl
+  tokenizer_file: data/vocab/tokenizer_config.json
+  src_key: zh
+  tgt_key: en
+
+evaluation:
+  model_save_path: experiments/logs/best_rnn_additive_no_teacher.pt
+
+experiments:
+  metrics_file: experiments/results/rnn_additive_no_teacher_metrics.csv
+

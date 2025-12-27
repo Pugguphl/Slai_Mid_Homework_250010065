@@ -1,0 +1,29 @@
+[tool]
+name = "zh-en-nmt-midterm"
+version = "0.1.0"
+description = "A midterm project for Chinese to English neural machine translation using RNN and Transformer models."
+authors = ["Your Name <your.email@example.com>"]
+license = "MIT"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependencies]
+torch = "^1.9.0"
+torchvision = "^0.10.0"
+numpy = "^1.21.0"
+pandas = "^1.3.0"
+scikit-learn = "^0.24.0"
+tqdm = "^4.62.0"
+sentencepiece = "^0.1.96"
+transformers = "^4.11.0"
+datasets = "^1.14.0"
+sacrebleu = "^2.4.3"
+
+[tool.poetry.scripts]
+preprocess_data = "scripts.preprocess_data:main"
+train_rnn = "src.rnn.train:main"
+train_transformer = "src.transformer.train:main"
+infer_rnn = "src.rnn.infer:main"
+infer_transformer = "src.transformer.infer:main"

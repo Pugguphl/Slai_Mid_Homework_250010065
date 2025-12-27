@@ -1,0 +1,10 @@
+{
+  "checkpoint": "experiments/logs/transformer_100k_optimized_best.pt",
+  "test_file": "/mnt/afs/250010065/SLAI_NLP_Mid_project/zh-en-nmt-midterm/data/processed/test.jsonl",
+  "num_examples": 195,
+  "greedy_bleu": 4.417437340158168,
+  "beam4_bleu": 8.909822596390848,
+  "beam8_bleu": 9.250999378885316,
+  "best_strategy": "beam8",
+  "best_bleu": 9.250999378885316
+}

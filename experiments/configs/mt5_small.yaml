@@ -1,0 +1,26 @@
+model:
+  pretrained_name: models/mt5-small  # 300M parameters, multilingual
+  max_length: 128
+
+training:
+  batch_size: 32
+  eval_batch_size: 64
+  learning_rate: 1.0e-6
+  num_epochs: 1000
+  warmup_steps: 50
+  weight_decay: 0.01
+  gradient_accumulation_steps: 1
+  max_grad_norm: 1.0
+
+data:
+  train_file: data/processed/train.jsonl
+  valid_file: data/processed/valid.jsonl
+  src_key: zh
+  tgt_key: en
+
+evaluation:
+  output_dir: experiments/logs/mt5_small
+  model_save_path: experiments/logs/mt5_small_best
+
+experiments:
+  metrics_file: experiments/results/mt5_small_metrics.json

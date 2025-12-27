@@ -1,0 +1,9 @@
+{
+  "type": "sentencepiece",
+  "model_file": "data/vocab/spm_zh_en.model",
+  "vocab_size": 32000,
+  "extra": {
+    "model_type": "unigram",
+    "character_coverage": 0.9995
+  }
+}

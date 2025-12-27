@@ -1,0 +1,345 @@
+#!/usr/bin/env python3
+"""
+Analyze Transformer ablation experiments (2x2 matrix: positional_encoding × norm_type).
+
+This script:
+1. Loads metrics CSVs from 4 ablation experiments
+2. Optionally runs inference on test/valid set for final BLEU scores
+3. Generates comparison visualizations:
+   - 2×2 heatmap of final BLEU scores
+   - Training curves for all 4 variants
+   - Ablation comparison table
+4. Saves results to experiments/results/
+
+Expected inputs:
+- experiments/results/transformer_abs_ln_metrics.csv
+- experiments/results/transformer_abs_rms_metrics.csv
+- experiments/results/transformer_rel_ln_metrics.csv
+- experiments/results/transformer_rel_rms_metrics.csv
+"""
+
+import argparse
+from pathlib import Path
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+import subprocess
+import json
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+
+def load_metrics(metrics_path: Path) -> pd.DataFrame:
+    """Load metrics CSV with error handling."""
+    if not metrics_path.exists():
+        print(f"Warning: {metrics_path} not found, skipping...")
+        return None
+    return pd.read_csv(metrics_path)
+
+
+def run_inference(checkpoint_path: Path, split: str, beam_size: int = 4) -> float:
+    """
+    Run inference on a checkpoint and return BLEU score.
+
+    Args:
+        checkpoint_path: Path to model checkpoint
+        split: 'valid' or 'test'
+        beam_size: Beam size for beam search
+
+    Returns:
+        BLEU score
+    """
+    if not checkpoint_path.exists():
+        print(f"Warning: Checkpoint {checkpoint_path} not found")
+        return 0.0
+
+    input_file = PROJECT_ROOT / f"data/processed/{split}.jsonl"
+    output_file = PROJECT_ROOT / f"experiments/results/temp_{checkpoint_path.stem}_{split}_beam{beam_size}.jsonl"
+
+    cmd = [
+        "python", str(PROJECT_ROOT / "src/transformer/infer.py"),
+        "--checkpoint", str(checkpoint_path),
+        "--input", str(input_file),
+        "--output", str(output_file),
+        "--tokenizer", str(PROJECT_ROOT / "data/vocab/tokenizer_config.json"),
+        "--beam_size", str(beam_size),
+    ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+
+        # Parse BLEU from output
+        for line in result.stdout.split('\n'):
+            if 'BLEU:' in line or 'bleu:' in line.lower():
+                parts = line.split(':')
+                if len(parts) >= 2:
+                    bleu_str = parts[-1].strip()
+                    try:
+                        return float(bleu_str)
+                    except ValueError:
+                        pass
+
+        # If not found in stdout, try to read from output file
+        if output_file.exists():
+            print(f"Inference completed, but BLEU not found in output. Check {output_file}")
+
+        return 0.0
+
+    except subprocess.TimeoutExpired:
+        print(f"Warning: Inference timed out for {checkpoint_path}")
+        return 0.0
+    except Exception as e:
+        print(f"Warning: Inference failed for {checkpoint_path}: {e}")
+        return 0.0
+
+
+
+def plot_heatmap(comparison_df: pd.DataFrame, output_path: Path):
+    """Create 2×2 heatmap of BLEU scores (positional_encoding × norm_type)."""
+    # Prepare data for heatmap
+    pivot = comparison_df.pivot_table(
+        values='best_bleu',
+        index='norm_type',
+        columns='positional_encoding',
+        aggfunc='mean'
+    )
+
+    # Reorder to consistent format
+    pivot = pivot.reindex(index=['layernorm', 'rmsnorm'],
+                          columns=['sinusoidal', 'relative'])
+
+    # Create heatmap
+    plt.figure(figsize=(8, 6))
+    ax = sns.heatmap(
+        pivot,
+        annot=True,
+        fmt='.4f',
+        cmap='YlGnBu',
+        cbar_kws={'label': 'BLEU Score'},
+        linewidths=1,
+        linecolor='gray'
+    )
+
+    # Labels
+    ax.set_xlabel('Positional Encoding', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Normalization Type', fontsize=12, fontweight='bold')
+    ax.set_title('Transformer Ablation: BLEU Scores\n(Positional Encoding × Normalization)',
+                 fontsize=14, fontweight='bold', pad=20)
+
+    # Better tick labels
+    ax.set_xticklabels(['Absolute (Sinusoidal)', 'Relative (T5-style)'], rotation=0)
+    ax.set_yticklabels(['LayerNorm', 'RMSNorm'], rotation=0)
+
+    plt.tight_layout()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"✓ Heatmap saved to {output_path}")
+
+
+def plot_training_curves(experiments: dict, output_path: Path):
+    """Plot training curves for all 4 ablation experiments."""
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    axes = axes.flatten()
+
+    # Plot 1: BLEU over epochs
+    ax = axes[0]
+    for name, df in experiments.items():
+        if df is not None and 'bleu' in df.columns:
+            ax.plot(df['epoch'], df['bleu'], marker='o', markersize=3, linewidth=1.5, label=name, alpha=0.8)
+    ax.set_xlabel('Epoch', fontsize=11)
+    ax.set_ylabel('Validation BLEU', fontsize=11)
+    ax.set_title('Validation BLEU over Training', fontsize=12, fontweight='bold')
+    ax.legend(fontsize=9, loc='best')
+    ax.grid(True, alpha=0.3)
+
+    # Plot 2: Training loss over epochs
+    ax = axes[1]
+    for name, df in experiments.items():
+        if df is not None and 'train_loss' in df.columns:
+            ax.plot(df['epoch'], df['train_loss'], marker='s', markersize=3, linewidth=1.5, label=name, alpha=0.8)
+    ax.set_xlabel('Epoch', fontsize=11)
+    ax.set_ylabel('Training Loss', fontsize=11)
+    ax.set_title('Training Loss over Training', fontsize=12, fontweight='bold')
+    ax.legend(fontsize=9, loc='best')
+    ax.grid(True, alpha=0.3)
+    ax.set_yscale('log')
+
+    # Plot 3: Validation loss over epochs
+    ax = axes[2]
+    for name, df in experiments.items():
+        if df is not None and 'valid_loss' in df.columns:
+            ax.plot(df['epoch'], df['valid_loss'], marker='^', markersize=3, linewidth=1.5, label=name, alpha=0.8)
+    ax.set_xlabel('Epoch', fontsize=11)
+    ax.set_ylabel('Validation Loss', fontsize=11)
+    ax.set_title('Validation Loss over Training', fontsize=12, fontweight='bold')
+    ax.legend(fontsize=9, loc='best')
+    ax.grid(True, alpha=0.3)
+    ax.set_yscale('log')
+
+    # Plot 4: Learning rate schedule (if available)
+    ax = axes[3]
+    has_lr = False
+    for name, df in experiments.items():
+        if df is not None and 'learning_rate' in df.columns:
+            ax.plot(df['epoch'], df['learning_rate'], marker='d', markersize=3, linewidth=1.5, label=name, alpha=0.8)
+            has_lr = True
+    if has_lr:
+        ax.set_xlabel('Epoch', fontsize=11)
+        ax.set_ylabel('Learning Rate', fontsize=11)
+        ax.set_title('Learning Rate Schedule', fontsize=12, fontweight='bold')
+        ax.legend(fontsize=9, loc='best')
+        ax.grid(True, alpha=0.3)
+    else:
+        ax.text(0.5, 0.5, 'Learning rate not logged', ha='center', va='center', fontsize=12)
+        ax.axis('off')
+
+    plt.suptitle('Transformer Ablation: Training Dynamics', fontsize=16, fontweight='bold', y=0.995)
+    plt.tight_layout()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"✓ Training curves saved to {output_path}")
+
+
+def generate_comparison_table(experiments: dict, output_csv: Path, output_md: Path):
+    """Generate comparison table and save as CSV and Markdown."""
+    rows = []
+
+    for name, df in experiments.items():
+        if df is None:
+            continue
+
+        # Parse experiment name
+        parts = name.split(' + ')
+        if len(parts) == 2:
+            pos_enc = parts[0].strip()
+            norm_type = parts[1].strip()
+        else:
+            pos_enc = 'unknown'
+            norm_type = 'unknown'
+
+        # Extract metrics
+        best_bleu = df['bleu'].max() if 'bleu' in df.columns else 0.0
+        best_epoch = df.loc[df['bleu'].idxmax(), 'epoch'] if 'bleu' in df.columns else 0
+        final_bleu = df['bleu'].iloc[-1] if 'bleu' in df.columns else 0.0
+        final_train_loss = df['train_loss'].iloc[-1] if 'train_loss' in df.columns else 0.0
+        final_valid_loss = df['valid_loss'].iloc[-1] if 'valid_loss' in df.columns else 0.0
+        total_epochs = len(df)
+
+        rows.append({
+            'experiment': name,
+            'positional_encoding': pos_enc,
+            'norm_type': norm_type,
+            'best_bleu': best_bleu,
+            'best_epoch': best_epoch,
+            'final_bleu': final_bleu,
+            'final_train_loss': final_train_loss,
+            'final_valid_loss': final_valid_loss,
+            'total_epochs': total_epochs,
+        })
+
+    # Create DataFrame
+    comparison_df = pd.DataFrame(rows)
+    comparison_df = comparison_df.sort_values('best_bleu', ascending=False)
+
+    # Save CSV
+    output_csv.parent.mkdir(parents=True, exist_ok=True)
+    comparison_df.to_csv(output_csv, index=False, float_format='%.4f')
+    print(f"✓ Comparison table saved to {output_csv}")
+
+    # Generate Markdown
+    with open(output_md, 'w', encoding='utf-8') as f:
+        f.write("# Transformer Ablation Study Results\n\n")
+        f.write("## 2×2 Ablation Matrix: Positional Encoding × Normalization\n\n")
+        f.write(comparison_df.to_markdown(index=False, floatfmt='.4f'))
+        f.write("\n\n")
+
+        # Summary
+        best_row = comparison_df.iloc[0]
+        f.write("## Summary\n\n")
+        f.write(f"**Best Configuration:** {best_row['experiment']}\n\n")
+        f.write(f"- Best BLEU: {best_row['best_bleu']:.4f} (epoch {best_row['best_epoch']:.0f})\n")
+        f.write(f"- Final BLEU: {best_row['final_bleu']:.4f}\n")
+        f.write(f"- Final Valid Loss: {best_row['final_valid_loss']:.4f}\n\n")
+
+        # Insights
+        f.write("## Key Findings\n\n")
+
+        # Compare positional encoding
+        abs_mean = comparison_df[comparison_df['positional_encoding'].str.contains('Absolute', na=False)]['best_bleu'].mean()
+        rel_mean = comparison_df[comparison_df['positional_encoding'].str.contains('Relative', na=False)]['best_bleu'].mean()
+        f.write(f"1. **Positional Encoding:**\n")
+        f.write(f"   - Absolute (sinusoidal) average BLEU: {abs_mean:.4f}\n")
+        f.write(f"   - Relative (T5-style) average BLEU: {rel_mean:.4f}\n")
+        f.write(f"   - Winner: {'Absolute' if abs_mean > rel_mean else 'Relative'}\n\n")
+
+        # Compare normalization
+        ln_mean = comparison_df[comparison_df['norm_type'].str.contains('LayerNorm', na=False)]['best_bleu'].mean()
+        rms_mean = comparison_df[comparison_df['norm_type'].str.contains('RMSNorm', na=False)]['best_bleu'].mean()
+        f.write(f"2. **Normalization:**\n")
+        f.write(f"   - LayerNorm average BLEU: {ln_mean:.4f}\n")
+        f.write(f"   - RMSNorm average BLEU: {rms_mean:.4f}\n")
+        f.write(f"   - Winner: {'LayerNorm' if ln_mean > rms_mean else 'RMSNorm'}\n\n")
+
+    print(f"✓ Comparison Markdown saved to {output_md}")
+
+    return comparison_df
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Analyze Transformer ablation experiments')
+    parser.add_argument('--results_dir', type=str, default='experiments/results',
+                        help='Directory containing metrics CSVs')
+    parser.add_argument('--output_dir', type=str, default='experiments/results/figures',
+                        help='Output directory for visualizations')
+    args = parser.parse_args()
+
+    results_dir = PROJECT_ROOT / args.results_dir
+    output_dir = PROJECT_ROOT / args.output_dir
+
+    print("=" * 60)
+    print("Transformer Ablation Analysis")
+    print("=" * 60)
+    print()
+
+    # Load all metrics
+    experiments = {
+        'Absolute PE + LayerNorm': load_metrics(results_dir / 'transformer_abs_ln_metrics.csv'),
+        'Absolute PE + RMSNorm': load_metrics(results_dir / 'transformer_abs_rms_metrics.csv'),
+        'Relative PE + LayerNorm': load_metrics(results_dir / 'transformer_rel_ln_metrics.csv'),
+        'Relative PE + RMSNorm': load_metrics(results_dir / 'transformer_rel_rms_metrics.csv'),
+    }
+
+    # Check if we have any data
+    if all(df is None for df in experiments.values()):
+        print("Error: No metrics files found. Please run experiments first.")
+        return
+
+    # Generate comparison table
+    comparison_df = generate_comparison_table(
+        experiments,
+        results_dir / 'transformer_ablation_comparison.csv',
+        results_dir / 'transformer_ablation_comparison.md'
+    )
+
+    # Generate visualizations
+    plot_heatmap(comparison_df, output_dir / 'transformer_ablation_heatmap.png')
+    plot_training_curves(experiments, output_dir / 'transformer_ablation_curves.png')
+
+    print()
+    print("=" * 60)
+    print("Analysis complete!")
+    print("=" * 60)
+    print()
+    print("Generated files:")
+    print(f"  - {results_dir / 'transformer_ablation_comparison.csv'}")
+    print(f"  - {results_dir / 'transformer_ablation_comparison.md'}")
+    print(f"  - {output_dir / 'transformer_ablation_heatmap.png'}")
+    print(f"  - {output_dir / 'transformer_ablation_curves.png'}")
+    print()
+
+
+if __name__ == '__main__':
+    main()

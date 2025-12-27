@@ -1,0 +1,8 @@
+run,log_dir,checkpoint,metrics_csv,test_greedy_bleu,test_beam4_bleu,test_beam8_bleu
+best_rnn_additive,/mnt/afs/250010065/SLAI_NLP_Mid_project/zh-en-nmt-midterm/experiments/logs,/mnt/afs/250010065/SLAI_NLP_Mid_project/zh-en-nmt-midterm/experiments/logs/best_rnn_additive.pt,,9.6116,11.6333,10.2733
+best_rnn_additive_no_teacher,/mnt/afs/250010065/SLAI_NLP_Mid_project/zh-en-nmt-midterm/experiments/logs,/mnt/afs/250010065/SLAI_NLP_Mid_project/zh-en-nmt-midterm/experiments/logs/best_rnn_additive_no_teacher.pt,,4.4237,4.1544,4.0489
+best_rnn_debug,/mnt/afs/250010065/SLAI_NLP_Mid_project/zh-en-nmt-midterm/experiments/logs,/mnt/afs/250010065/SLAI_NLP_Mid_project/zh-en-nmt-midterm/experiments/logs/best_rnn_debug.pt,,0.7327,0.7327,0.0
+best_rnn_model,/mnt/afs/250010065/SLAI_NLP_Mid_project/zh-en-nmt-midterm/experiments/logs,/mnt/afs/250010065/SLAI_NLP_Mid_project/zh-en-nmt-midterm/experiments/logs/best_rnn_model.pt,,11.4471,8.6979,9.7914
+best_rnn_multiplicative,/mnt/afs/250010065/SLAI_NLP_Mid_project/zh-en-nmt-midterm/experiments/logs,/mnt/afs/250010065/SLAI_NLP_Mid_project/zh-en-nmt-midterm/experiments/logs/best_rnn_multiplicative.pt,,11.8684,9.7914,8.2823
+best_rnn_multiplicative_no_teacher,/mnt/afs/250010065/SLAI_NLP_Mid_project/zh-en-nmt-midterm/experiments/logs,/mnt/afs/250010065/SLAI_NLP_Mid_project/zh-en-nmt-midterm/experiments/logs/best_rnn_multiplicative_no_teacher.pt,,4.6733,4.5518,4.5518
+best_rnn_no_teacher,/mnt/afs/250010065/SLAI_NLP_Mid_project/zh-en-nmt-midterm/experiments/logs,/mnt/afs/250010065/SLAI_NLP_Mid_project/zh-en-nmt-midterm/experiments/logs/best_rnn_no_teacher.pt,,5.0246,3.9611,7.1239

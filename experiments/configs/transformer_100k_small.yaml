@@ -1,0 +1,43 @@
+seed: 1337
+
+model:
+  d_model: 128
+  num_heads: 2
+  num_encoder_layers: 3
+  num_decoder_layers: 3
+  dim_feedforward: 512
+  dropout: 0.25
+  activation: relu
+  max_position_embeddings: 128
+  max_decode_len: 50
+  share_embeddings: true
+  tie_output: true
+  norm_first: true
+  positional_encoding: sinusoidal
+  norm_type: rmsnorm
+
+training:
+  batch_size: 512
+  eval_batch_size: 256
+  learning_rate: 0.002
+  num_epochs: 80
+  warmup_steps: 1000
+  weight_decay: 0.01
+  gradient_accumulation_steps: 1
+  max_grad_norm: 1.0
+  label_smoothing: 0.1
+  num_workers: 4
+  lr_scheduler_type: cosine
+
+data:
+  train_file: data/processed/train_100k.jsonl
+  valid_file: data/processed/valid.jsonl
+  tokenizer_file: data/vocab/tokenizer_config.json
+  src_key: zh
+  tgt_key: en
+
+evaluation:
+  model_save_path: experiments/logs/transformer_100k_small_best.pt
+
+experiments:
+  metrics_file: experiments/results/transformer_100k_small_metrics.csv

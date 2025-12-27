@@ -1,0 +1,9 @@
+*.safetensors filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+*.scaler.pt filter=lfs diff=lfs merge=lfs -text
+*.scheduler.pt filter=lfs diff=lfs merge=lfs -text
+*.rng_state.pth filter=lfs diff=lfs merge=lfs -text
+*.training_args.bin filter=lfs diff=lfs merge=lfs -text
+*.pt filter=lfs diff=lfs merge=lfs -text
+*.pth filter=lfs diff=lfs merge=lfs -text
+*.optimizer.pt filter=lfs diff=lfs merge=lfs -text

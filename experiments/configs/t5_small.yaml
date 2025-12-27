@@ -1,0 +1,25 @@
+model:
+  pretrained_name: models/t5-small  # 60M parameters (local copy)
+  max_length: 128
+
+training:
+  batch_size: 32
+  eval_batch_size: 64
+  learning_rate: 5.0e-5
+  num_epochs: 500
+  warmup_steps: 1000
+  weight_decay: 0.01
+  gradient_accumulation_steps: 1
+
+data:
+  train_file: data/processed/train.jsonl
+  valid_file: data/processed/valid.jsonl
+  src_key: zh
+  tgt_key: en
+
+evaluation:
+  output_dir: experiments/logs/t5_small
+  model_save_path: experiments/logs/t5_small_best
+
+experiments:
+  metrics_file: experiments/results/t5_small_metrics.json

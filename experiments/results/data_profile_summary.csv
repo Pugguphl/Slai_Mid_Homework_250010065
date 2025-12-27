@@ -1,0 +1,5 @@
+file,samples,src_chars_mean,src_chars_p95,tgt_tokens_mean,tgt_tokens_p95,dup_pairs%
+test.jsonl,200,50.4,92.25,31.19,62.0,2.0
+train_100k.jsonl,100000,42.36,83.0,21.99,41.0,0.169
+train_10k.jsonl,10000,42.69,84.0,21.94,41.0,0.0
+valid.jsonl,500,37.05,79.0,22.93,46.0,0.2

@@ -1,0 +1,5 @@
+experiment,best_bleu,best_epoch,final_bleu,final_train_loss,final_valid_loss,total_epochs,test_greedy_bleu,test_beam4_bleu,test_beam8_bleu
+Batch 256,4.6424,493,4.3785,1.8993,6.6908,500,0.0000,0.0000,0.0000
+D_model 768,4.5429,404,4.1722,3.2263,6.7384,500,0.0000,0.0000,0.0000
+LR 1e-3,4.0723,468,3.5732,3.7730,6.6825,500,0.0000,0.0000,0.0000
+Baseline,4.0041,472,3.4898,3.7894,6.6711,500,0.0000,0.0000,0.0000

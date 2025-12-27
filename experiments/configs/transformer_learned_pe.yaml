@@ -1,0 +1,41 @@
+# Transformer ablation: learned positional embeddings (vs sinusoidal baseline)
+# Usage:
+#   bash scripts/train_transformer.sh experiments/configs/transformer_learned_pe.yaml
+
+seed: 42
+
+data:
+  train_file: data/processed/train.jsonl
+  valid_file: data/processed/valid.jsonl
+  vocab_model: data/vocab/spm_zh_en.model
+
+model:
+  type: transformer
+  d_model: 512
+  num_heads: 8
+  num_encoder_layers: 6
+  num_decoder_layers: 6
+  dim_feedforward: 2048
+  dropout: 0.1
+  activation: relu
+  max_position_embeddings: 512
+  share_embeddings: true
+  tie_output: true
+  norm_first: true
+  # NOTE: model.py already supports learned PE via PositionalEncoding(learned=True),
+  # but training code must pass this flag. If not wired yet, we will add it next.
+  learned_positional_encoding: true
+
+training:
+  batch_size: 128
+  num_epochs: 500
+  learning_rate: 0.0005
+  warmup_steps: 4000
+  label_smoothing: 0.1
+  grad_clip: 1.0
+  fp16: false
+
+logging:
+  log_dir: experiments/logs
+  run_name: transformer_learned_pe
+  save_every: 1

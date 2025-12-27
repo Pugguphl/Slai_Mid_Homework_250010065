@@ -1,0 +1,17 @@
+{
+  "Greedy": {
+    "bleu": 11.86840521952098,
+    "avg_time_per_sample": 0.01080564090183803,
+    "total_samples": 195
+  },
+  "Beam4": {
+    "bleu": 9.791354533767086,
+    "avg_time_per_sample": 0.2723243860098032,
+    "total_samples": 195
+  },
+  "Beam8": {
+    "bleu": 8.282282660969607,
+    "avg_time_per_sample": 0.647354028163812,
+    "total_samples": 195
+  }
+}

@@ -1,0 +1,5 @@
+experiment,positional_encoding,norm_type,best_bleu,best_epoch,final_bleu,final_train_loss,final_valid_loss,total_epochs,test_greedy_bleu,test_beam4_bleu,test_beam8_bleu
+Absolute PE + RMSNorm,Absolute PE,RMSNorm,4.4334,496,4.1167,3.7845,6.7215,500,3.6284,4.0254,4.0003
+Absolute PE + LayerNorm,Absolute PE,LayerNorm,4.0041,472,3.4898,3.7894,6.6711,500,2.7940,3.3041,3.3374
+Relative PE + RMSNorm,Relative PE,RMSNorm,3.9200,500,3.9200,3.3112,7.3415,500,2.8151,2.6100,2.7912
+Relative PE + LayerNorm,Relative PE,LayerNorm,3.2314,467,2.8012,3.3613,7.5133,500,2.3224,2.7382,2.5325

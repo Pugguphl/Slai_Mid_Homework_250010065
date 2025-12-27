@@ -1,0 +1,34 @@
+seed: 123
+
+model:
+  type: rnn
+  architecture: gru
+  embedding_dim: 128
+  hidden_dim: 256
+  num_layers: 2
+  dropout: 0.2
+  attention: dot
+  max_decode_len: 80
+
+training:
+  batch_size: 64
+  eval_batch_size: 64
+  learning_rate: 0.001
+  num_epochs: 1
+  max_grad_norm: 5.0
+  teacher_forcing_ratio: 1.0
+  teacher_forcing_decay: 0.0
+  num_workers: 2
+
+data:
+  train_file: data/processed/train_debug.jsonl
+  valid_file: data/processed/valid_debug.jsonl
+  tokenizer_file: data/vocab/tokenizer_config.json
+  src_key: zh
+  tgt_key: en
+
+evaluation:
+  model_save_path: experiments/logs/best_rnn_debug.pt
+
+experiments:
+  metrics_file: experiments/results/rnn_debug_metrics.csv

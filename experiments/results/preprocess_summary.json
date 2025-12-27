@@ -1,0 +1,41 @@
+{
+  "cleaning_config": {
+    "min_len": 2,
+    "max_src_len": 120,
+    "max_tgt_len": 80,
+    "max_length_ratio": 4.0,
+    "lowercase_en": true,
+    "truncate_long": false,
+    "allow_empty": false
+  },
+  "train_stats": {
+    "raw": 110000,
+    "filtered_length_ratio": 434,
+    "filtered_src_length": 630,
+    "filtered_tgt_length": 306,
+    "filtered_duplicates": 9910,
+    "kept": 98720
+  },
+  "valid_stats": {
+    "raw": 500,
+    "filtered_src_length": 4,
+    "filtered_length_ratio": 3,
+    "filtered_tgt_length": 1,
+    "kept": 492
+  },
+  "test_stats": {
+    "raw": 200,
+    "filtered_tgt_length": 2,
+    "filtered_src_length": 2,
+    "filtered_length_ratio": 1,
+    "kept": 195
+  },
+  "tokenizer": {
+    "config_path": "data/vocab/tokenizer_config.json",
+    "files": {
+      "model_file": "data/vocab/spm_zh_en.model",
+      "vocab_file": "data/vocab/spm_zh_en.vocab"
+    },
+    "type": "sentencepiece"
+  }
+}

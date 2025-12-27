@@ -1,0 +1,50 @@
+# Model checkpoints
+experiments/logs/**/*.pt
+experiments/logs/**/*.safetensors
+experiments/logs/**/*.bin
+experiments/logs/**/*.pth
+experiments/logs/**/*.msgpack
+experiments/logs/**/optimizer.pt
+experiments/logs/**/scheduler.pt
+experiments/logs/**/rng_state.pth
+experiments/logs/**/scaler.pt
+experiments/logs/**/training_args.bin
+
+# Pre-trained models
+models/**/*.safetensors
+models/**/*.bin
+models/**/*.pth
+models/**/*.msgpack
+models/**/*.onnx
+models/**/*.h5
+
+# Large PDF reports
+experiments/results/*.pdf
+
+# Data files
+data/raw/*
+data/processed/*
+!data/processed/.gitkeep
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

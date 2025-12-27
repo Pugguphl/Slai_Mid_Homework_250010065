@@ -1,0 +1,102 @@
+[
+  {
+    "index": 0,
+    "source": "记录指出 HMX-1 曾询问此次活动是否违反了该法案.",
+    "reference": "records indicate that hmx-1 inquired about whether the event might violate the provision.",
+    "predictions": {
+      "greedy": "the report's reported that the cdr's cdr, the the..",
+      "beam_4": "a recent study published by the publication of of the 34 journal journal journal.",
+      "beam_8": "a recent study published in the journal journal journal journal journal journal journal journal."
+    }
+  },
+  {
+    "index": 1,
+    "source": "该指挥官写道“我们问的一个问题是这是否违反了《哈奇法案》,并被告知没有违反.”",
+    "reference": "\"one question we asked was if it was a violation of the hatch act and were informed it was not,\" the commander wrote.",
+    "predictions": {
+      "greedy": "the book was not to to the \" the \" of the \", but it was not to to the.",
+      "beam_4": "the book was not to to the thes, \" that it was not to \" the right thing, but it was not..",
+      "beam_8": "the book was called by the titleing that the \" was not the right thing, but it was not."
+    }
+  },
+  {
+    "index": 2,
+    "source": "“听起来你被锁住了啊,”副司令回复道.",
+    "reference": "\"sounds like you are locked,\" the deputy commandant replied.",
+    "predictions": {
+      "greedy": "\"we are \"not a,,, the the.",
+      "beam_4": "\"we are \"not to be a,, we are.",
+      "beam_8": "\"we don't be a,,, it is."
+    }
+  },
+  {
+    "index": 3,
+    "source": "白宫将此次“美国制造”活动定义为官方活动,因此不受《哈奇法案》管辖.",
+    "reference": "the \"made in america\" event was designated an official event by the white house, and would not have been covered by the hatch act.",
+    "predictions": {
+      "greedy": "the us constitution was accused of \" \" \" \"s\"\",\" which was accused of the \", and thes.",
+      "beam_4": "one might argue that the us constitution is \" \" a \" of the,\" the us constitution, the us constitution.",
+      "beam_8": "one might argue that the us federal reserve's \" of \" the \" the \" of the \"s, the us constitution, the us constitution. the us constitution. the white house. the white house. the white house. the white house. the white house."
+    }
+  },
+  {
+    "index": 4,
+    "source": "但是即使是官方活动也带有政治色彩.",
+    "reference": "but even official events have political overtones.",
+    "predictions": {
+      "greedy": "but even if the has been been political.",
+      "beam_4": "but it has become a political of political..",
+      "beam_8": "but even if the has been political consequences."
+    }
+  },
+  {
+    "index": 5,
+    "source": "活动中,总统推行当时参议院的议题:医疗改革,并大肆吹捧对政府法规的管控.",
+    "reference": "at the event, the president made a push for healthcare reform efforts then underway in the senate and touted efforts to rein in government regulations.",
+    "predictions": {
+      "greedy": "in the president, president barack obama's administration has been to to: the, of, and, and, and the the of the.",
+      "beam_4": "president françois hollande, president barack obama's administration has been to to, and,, and, and, and thes.",
+      "beam_8": "president president françois hollande, president barack obama's administration has been to to, and,, and,, ands, and the.."
+    }
+  },
+  {
+    "index": 6,
+    "source": "将海军陆战队一号或空军一号飞机用于政治宣传目的已经不是什么新鲜事.",
+    "reference": "using the aircraft known as marine one or air force one for politically advantageous purposes is hardly a new phenomenon.",
+    "predictions": {
+      "greedy": "the s, the, of the, or a political of the organss.",
+      "beam_4": "it is likely to imagine that the city's political prisoners in the city of the city's political system.",
+      "beam_8": "hundreds of thousands of thousands of thousands of thousands of people in the city could be a.."
+    }
+  },
+  {
+    "index": 7,
+    "source": "历届总统都被要求出行需乘坐这些飞机.",
+    "reference": "presidents are required to use them for travel.",
+    "predictions": {
+      "greedy": "the president of the president will have to to to..",
+      "beam_4": "president george w.",
+      "beam_8": "president george w. kennedy's visit to the.."
+    }
+  },
+  {
+    "index": 8,
+    "source": "但是仅为拍照目的将其征用并不常见.",
+    "reference": "but requisitioning their use solely for a photo-op is unusual.",
+    "predictions": {
+      "greedy": "but the has been been a to.",
+      "beam_4": "but it has also been a to for the..",
+      "beam_8": "but it has also been a to."
+    }
+  },
+  {
+    "index": 9,
+    "source": "二月份特朗普就受到关注,当时是在佛罗里达州墨尔本,总统专机慢慢滑行,最终停到了他第一次竞选集会的背景布处,而他的推特账户充斥着对前任总统使用总统专机的抱怨信息.",
+    "reference": "trump drew scrutiny in february when the presidential airplane taxied to the backdrop of his first campaign rally in melbourne, fla., and his twitter account is flush with messages complaining about his predecessor's use of the presidential aircraft.",
+    "predictions": {
+      "greedy": "president donald trump's administration,s president,osni mubarak,s,,,, and his campaign, and his wife, and his wife, and his wife, and his wife, and his wife, and his wife, and his wife, and his wife.",
+      "beam_4": "president donald trump's presidential campaign, he took office in office, and his appointments, and his campaign, and his wife, his campaign, and his wife, and his wife, and his wife, and his wife.",
+      "beam_8": "president donald trump's presidential campaign, president richard nixon's presidential campaign, and his appointments, president barack obama's office, and his wife, and his wife, and his wife, and his wife, and his wife."
+    }
+  }
+]

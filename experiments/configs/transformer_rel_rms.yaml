@@ -1,0 +1,43 @@
+seed: 1337
+
+model:
+  d_model: 512
+  num_heads: 8
+  num_encoder_layers: 6
+  num_decoder_layers: 6
+  dim_feedforward: 2048
+  dropout: 0.1
+  activation: relu
+  max_position_embeddings: 256
+  max_decode_len: 120
+  share_embeddings: true
+  tie_output: true
+  norm_first: true
+  # Ablation: Relative positional encoding + RMSNorm
+  positional_encoding: relative
+  norm_type: rmsnorm
+
+training:
+  batch_size: 128
+  eval_batch_size: 64
+  learning_rate: 0.0005
+  num_epochs: 500
+  warmup_steps: 4000
+  weight_decay: 0.01
+  gradient_accumulation_steps: 2
+  max_grad_norm: 1.0
+  label_smoothing: 0.1
+  num_workers: 4
+
+data:
+  train_file: data/processed/train.jsonl
+  valid_file: data/processed/valid.jsonl
+  tokenizer_file: data/vocab/tokenizer_config.json
+  src_key: zh
+  tgt_key: en
+
+evaluation:
+  model_save_path: experiments/logs/transformer_rel_rms_best.pt
+
+experiments:
+  metrics_file: experiments/results/transformer_rel_rms_metrics.csv
