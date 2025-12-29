@@ -150,7 +150,7 @@ This project fulfills the following requirements:
 - [x] Personal project report (ID_name.pdf)
 - [ ] Group presentation (10 min talk + 5 min Q&A)
 
-**Project Report**: [250010065_庞宏林_项目报告.pdf](reports/250010065_庞宏林_项目报告.pdf)
+**Project Report**: [250010065_庞宏林_项目报告.pdf](reports/)
 
 ## Acknowledgments
 
